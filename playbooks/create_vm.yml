@@ -1,0 +1,50 @@
+- name: Creation d'une VM via l'API Proxmox
+  hosts: proxmox
+  connection: local
+  gather_facts: false
+
+  vars:
+    vm_name_prefix: "vm-lubuntu"
+
+  tasks:
+    - name: Recuperer la liste des VMs existantes
+      uri:
+        url: "{{ proxmox_api_host }}/api2/json/cluster/resources?type=vm"
+        method: GET
+        headers:
+          Authorization: "PVEAPIToken={{ proxmox_api_user }}={{ proxmox_api_token }}"
+        validate_certs: false
+      register: vm_list
+
+    - name: Calcul du prochain VMID disponible
+      set_fact:
+        vmid: "{{ (vm_list.json.data | map(attribute='vmid') | list | max | default(100)) + 1 }}"
+        vm_name: "{{ vm_name_prefix }}-{{ vmid }}"
+
+    - name: Creation de la VM Proxmox
+      uri:
+        url: "{{ proxmox_api_host }}/api2/json/nodes/{{ node }}/qemu"
+        method: POST
+        headers:
+          Authorization: "PVEAPIToken={{ proxmox_api_user }}={{ proxmox_api_token }}"
+          Content-Type: "application/x-www-form-urlencoded"
+        body_format: form-urlencoded
+        body:
+          vmid: "{{ vmid }}"
+          name: "{{ vm_name }}"
+          cores: "{{ vm_cores }}"
+          memory: "{{ vm_memory }}"
+          scsi0: "{{ vm_storage }}:{{ vm_disk_size }}"
+          net0: "virtio,bridge=vmbr0"
+          ostype: l26
+          ide2: "{{ iso_storage }}:iso/{{ iso_file }},media=cdrom"
+          boot: cdn
+        validate_certs: false
+
+    - name: Demarrage de la VM
+      uri:
+        url: "{{ proxmox_api_host }}/api2/json/nodes/{{ node }}/qemu/{{ vmid }}/status/start"
+        method: POST
+        headers:
+          Authorization: "PVEAPIToken={{ proxmox_api_user }}={{ proxmox_api_token }}"
+        validate_certs: false

@@ -1,0 +1,4 @@
+proxmox_node: "pve"
+api_host: "192.168.30.129"
+api_user: "root@pam"
+api_password: "Marocain_78"

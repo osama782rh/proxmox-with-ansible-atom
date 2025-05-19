@@ -1,0 +1,10 @@
+proxmox_api_host: "https://192.168.30.132:8006"
+proxmox_api_user: "root@pam!atom-token"
+proxmox_api_token: "c1b89fc2-1e55-44cb-976e-7904c599e48f"
+node: "node0"
+iso_file: "lubuntu-16.04.6-desktop-amd64.iso"
+vm_cores: 2
+vm_memory: 512
+vm_disk_size: 10
+vm_storage: local-lvm
+iso_storage: local
