@@ -1,4 +1,4 @@
-proxmox_node: "pve"
-api_host: "192.168.30.129"
-api_user: "root@pam"
-api_password: "Marocain_78"
+proxmox_node: "node0"
+api_host: "https://192.168.30.132:8006"
+api_user: "root@pam!atom-toke"
+api_password: "c1b89fc2-1e55-44cb-976e-7904c599e48f"
